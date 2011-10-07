@@ -1,0 +1,76 @@
+	//BEGIN OLD READ
+
+	////a more efficient method for copying to circular  buffer may be desirable
+
+	//float * fbuf = (float*)malloc(sizeof(float)*samplesToRead);
+
+	//if(fbuf == NULL)
+	//	return false;
+
+	//UINT32 numRead;
+
+
+	////read from WAV file to temp buffer, then copy to CircFBuf
+	//wavErr = wavRead(InWavFile, fbuf, samplesToRead, 1, &numRead);
+
+	//if(wavErr != WAV_NO_ERR)
+	//{	//if we can't read enough (but at least one sample), then pad 0's into buffer, then still copy
+	//	ret = false;
+	//	numRead = 0;
+	//}
+
+	//if(numRead < samplesToRead)
+	//{
+	//	for(UINT32 i = numRead ; i<samplesToRead ; i++)
+	//	{
+	//		fbuf[i] = 0.0f;
+	//	} //for
+
+	//} //if
+
+	////copy to circBuf
+	//UINT32 i,j;
+	//for(i = 0, j = OutBuf->virtSize ; i<samplesToRead ; i++, j++)
+	//	OutBuf->buf[j & OutBuf->mask] = fbuf[i];
+
+	//OutBuf->virtSize += samplesToRead;
+
+	//free(fbuf);
+
+	//*trueSize = OutBuf->virtSize - (samplesToRead - numRead);
+	//END OLD READ
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+	//BEGIN OLD WRITE
+	
+	//bool ret = false;
+
+	//float * fbuf = (float*)malloc(sizeof(float)*Size);
+
+	//if(fbuf == NULL)
+	//	return false;
+
+	////copy from circBuf
+	//UINT32 i,j;
+	//for(i = 0, j = TargetVirtStartPos ; i<Size ; i++, j++)
+	//	fbuf[i] = Buf->buf[j & Buf->mask];
+
+	////the row size and copy size seems cludgy
+	//if(WAV_NO_ERR != waveWrite(OutWavFile, fbuf, Size, 1, Size))
+	//	ret = false;
+	//else
+	//	ret = true;
+
+	//free(fbuf);
+
+	//return ret;
+
+	////END OLD WRITE
+
+
+
+
+

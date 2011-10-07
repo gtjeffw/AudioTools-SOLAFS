@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SOLAFS", "SOLAFS.vcproj", "{0F90A391-3AE7-4179-827C-6D0CADB97B06}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CIRCULAR_BUFFER", "..\..\..\CIRCULAR_BUFFER\projects\win32\CIRCULAR_BUFFER.vcproj", "{AB8CF4E9-E712-4C49-AA95-E5F8AD1ADD4D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WAVIO", "..\..\..\WAVIO\project\win32\WAVIO.vcproj", "{9E7D7C95-4706-42E0-AE3B-7347900CEA5D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Spearcon", "..\..\..\Spearcon\project\Spearcon\Spearcon.vcproj", "{17C5E2F0-4B90-4CD6-B457-9042B525CD3B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SilentStripper", "..\..\..\SilentStripper\project\SilentStripper\SilentStripper.vcproj", "{CD0487FB-76FD-4DE7-9D42-5BBB06664553}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0F90A391-3AE7-4179-827C-6D0CADB97B06}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0F90A391-3AE7-4179-827C-6D0CADB97B06}.Debug|Win32.Build.0 = Debug|Win32
+		{0F90A391-3AE7-4179-827C-6D0CADB97B06}.Release|Win32.ActiveCfg = Release|Win32
+		{0F90A391-3AE7-4179-827C-6D0CADB97B06}.Release|Win32.Build.0 = Release|Win32
+		{AB8CF4E9-E712-4C49-AA95-E5F8AD1ADD4D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AB8CF4E9-E712-4C49-AA95-E5F8AD1ADD4D}.Debug|Win32.Build.0 = Debug|Win32
+		{AB8CF4E9-E712-4C49-AA95-E5F8AD1ADD4D}.Release|Win32.ActiveCfg = Release|Win32
+		{AB8CF4E9-E712-4C49-AA95-E5F8AD1ADD4D}.Release|Win32.Build.0 = Release|Win32
+		{9E7D7C95-4706-42E0-AE3B-7347900CEA5D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E7D7C95-4706-42E0-AE3B-7347900CEA5D}.Debug|Win32.Build.0 = Debug|Win32
+		{9E7D7C95-4706-42E0-AE3B-7347900CEA5D}.Release|Win32.ActiveCfg = Release|Win32
+		{9E7D7C95-4706-42E0-AE3B-7347900CEA5D}.Release|Win32.Build.0 = Release|Win32
+		{17C5E2F0-4B90-4CD6-B457-9042B525CD3B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{17C5E2F0-4B90-4CD6-B457-9042B525CD3B}.Debug|Win32.Build.0 = Debug|Win32
+		{17C5E2F0-4B90-4CD6-B457-9042B525CD3B}.Release|Win32.ActiveCfg = Release|Win32
+		{17C5E2F0-4B90-4CD6-B457-9042B525CD3B}.Release|Win32.Build.0 = Release|Win32
+		{CD0487FB-76FD-4DE7-9D42-5BBB06664553}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CD0487FB-76FD-4DE7-9D42-5BBB06664553}.Debug|Win32.Build.0 = Debug|Win32
+		{CD0487FB-76FD-4DE7-9D42-5BBB06664553}.Release|Win32.ActiveCfg = Release|Win32
+		{CD0487FB-76FD-4DE7-9D42-5BBB06664553}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

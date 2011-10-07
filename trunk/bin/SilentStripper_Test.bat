@@ -1,0 +1,1 @@
+debug\SilentStripper.exe ./audio/* ./audio/output/ 0.08 10 20 20
