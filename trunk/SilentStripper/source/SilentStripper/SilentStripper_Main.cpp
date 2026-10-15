@@ -55,13 +55,18 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 	UINT32 fBufPadBeginSize = 0;
 	UINT32 fBufPadEndSize = 0;
 
+	//declared up here so the goto's below don't skip their initialization
+	UINT32 startPos = 0;
+	UINT32 endPos = 0;
+	UINT32 rampSize = 0;
+
 
 	werr = wavOpenForRead(inFile, &wf);
 
 	if(werr != WAV_NO_ERR) {
 
 		(void)_tprintf_s(_T("Failed to load %s with err val: %d\n"), inFile, werr);
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 
 	} //if
 
@@ -82,29 +87,42 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 	if(numChan != 1)
 	{
 		(void)_tprintf_s(_T("Only mono files supported for now.\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}
 
 
 	fBufSize = wf->wavInfo->numSamples;
-	
-	fbuf1 = (float*)malloc((size_t) ( numChan * fBufSize * sizeof(float) ));
+
+	//numSamples comes straight from the file header, so make sure the malloc() size can't overflow
+	if(fBufSize == 0 || fBufSize > ((size_t)-1) / (numChan * sizeof(float)))
+	{
+		(void)_tprintf_s(_T("Bad sample count in file header.\n"));
+		goto SILENT_STRIPPER_CLEANUP;
+	}
+
+	fbuf1 = (float*)malloc((size_t)numChan * fBufSize * sizeof(float));
 
 	if(fbuf1 == NULL)
 	{
 		(void)_tprintf_s(_T("Failed to malloc() fbuf1.\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}
 
 
 	fBufPadBeginSize =  (UINT32)(wf->wavInfo->samplesPerSec * (beginPad_ms/(float)1000)); 
 
-	fbufPadBegin = (float*)malloc((size_t) ( numChan * fBufPadBeginSize * sizeof(float) ));
+	if(fBufPadBeginSize > ((size_t)-1) / (numChan * sizeof(float)))
+	{
+		(void)_tprintf_s(_T("beginPad_ms is too big.\n"));
+		goto SILENT_STRIPPER_CLEANUP;
+	}
+
+	fbufPadBegin = (float*)malloc((size_t)numChan * fBufPadBeginSize * sizeof(float));
 
 	if(fbufPadBegin == NULL)
 	{
 		(void)_tprintf_s(_T("Failed to malloc() fbufPadBegin.\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}
 
 
@@ -113,12 +131,18 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 
 	fBufPadEndSize =  (UINT32)(wf->wavInfo->samplesPerSec * (endPad_ms/(float)1000)); 
 
-	fbufPadEnd = (float*)malloc((size_t) ( numChan * fBufPadEndSize * sizeof(float) ));
+	if(fBufPadEndSize > ((size_t)-1) / (numChan * sizeof(float)))
+	{
+		(void)_tprintf_s(_T("endPad_ms is too big.\n"));
+		goto SILENT_STRIPPER_CLEANUP;
+	}
+
+	fbufPadEnd = (float*)malloc((size_t)numChan * fBufPadEndSize * sizeof(float));
 
 	if(fbufPadEnd == NULL)
 	{
 		(void)_tprintf_s(_T("Failed to malloc() fbufPadBegin.\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}
 
 	for(UINT32 i=0 ; i<fBufPadEndSize ; ++i)
@@ -130,7 +154,7 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 	if(werr != WAV_NO_ERR) {
 
 		(void)_tprintf_s(_T("Failed to load %s with err val: %d\n"), outFile, werr);
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 
 	} //if
 
@@ -141,14 +165,14 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 
 	if(werr != WAV_NO_ERR) {
 		(void)_tprintf_s(_T("Unexpected error doing wavRead()!\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	} //if
 
 
 	if(fBufSize != floatsRead)
 		(void)_tprintf_s(_T("WARNING: floatsRead was not the same as fBufSize!\n"));
 
-	UINT32 startPos = 0;
+	startPos = 0;
 
 	switch(numChan)
 	{
@@ -173,36 +197,37 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 		break;
 	default:
 		(void)_tprintf_s(_T("Unsupported channels!\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}
 
 
-	UINT32 endPos = floatsRead-1;
+	endPos = floatsRead-1;
 
+	//i is unsigned, so count down to 1 and use i-1 (i>=0 would always be true)
 	switch(numChan)
 	{
 	case 1:
-		for(UINT32 i=floatsRead-1 ; i>=0 ; --i)
+		for(UINT32 i=floatsRead ; i>0 ; --i)
 		{
-			//(void)_tprintf_s(_T("%f\n"),fbuf1[i]);
-			if(fabs(fbuf1[i]) <= silenceThresh)
-				endPos = i;
+			//(void)_tprintf_s(_T("%f\n"),fbuf1[i-1]);
+			if(fabs(fbuf1[i-1]) <= silenceThresh)
+				endPos = i-1;
 			else
 				break;
 		}
 		break;
 	case 2:
-		for(UINT32 i=floatsRead*2-2 ; i>=0 ; i-=2)
+		for(UINT32 i=floatsRead ; i>0 ; --i)
 		{
-			if(fabs(fbuf1[i]) <= silenceThresh)
-				endPos = i;
+			if(fabs(fbuf1[(i-1)*2]) <= silenceThresh)
+				endPos = (i-1)*2;
 			else
 				break;
 		}
 		break;
 	default:
 		(void)_tprintf_s(_T("Unsupported channels!\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}
 
 
@@ -213,13 +238,14 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 
 	//ramp the sound (attack/sustain) from 0
 
-	UINT32 rampSize =  (UINT32)(wf->wavInfo->samplesPerSec * (envRampSize_ms/(float)1000)); //40;
+	rampSize =  (UINT32)(wf->wavInfo->samplesPerSec * (envRampSize_ms/(float)1000)); //40;
 
 
-	if( ((startPos+rampSize) > endPos) || ((endPos-rampSize) < startPos) || ((rampSize*2) > (endPos - startPos)))
+	//written to avoid unsigned wrap-around (e.g. endPos < startPos when the whole file is silent)
+	if( (endPos < startPos) || (rampSize > (endPos - startPos)/2) )
 	{
 		(void)_tprintf_s(_T("ERROR: Audio trimmed so small that beginning and end cannot be enveloped! (Or maybe ramp size is too big.)\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}
 
 
@@ -230,20 +256,21 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 		if(ratio > 1.0f)
 		{
 			(void)_tprintf_s(_T("ERROR: rampUp envelope scalar greater than 1.0f (==%f)!\n"), ratio);
-			return;
+			goto SILENT_STRIPPER_CLEANUP;
 		}
 
 		fbuf1[i] *= ratio;
 	}
 
-	for(UINT32 i=endPos ; i>=(endPos - rampSize) ; --i)
+	for(UINT32 n=0 ; n<=rampSize ; ++n) //i runs from endPos down to (endPos - rampSize)
 	{
+		UINT32 i = endPos - n;
 		float ratio = ((endPos-i))/(float)rampSize;
 
 		if(ratio > 1.0f)
 		{
 			(void)_tprintf_s(_T("ERROR: rampDown envelope scalar greater than 1.0f (==%f)!\n"), ratio);
-			return;
+			goto SILENT_STRIPPER_CLEANUP;
 		}
 
 		fbuf1[i] *= ratio;
@@ -257,7 +284,7 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 
 	if(werr != WAV_NO_ERR) {
 		(void)_tprintf_s(_T("Unexpected error doing wavWrite()!\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}//if
 
 
@@ -267,7 +294,7 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 
 	if(werr != WAV_NO_ERR) {
 		(void)_tprintf_s(_T("Unexpected error doing wavWrite()!\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}//if
 
 
@@ -277,7 +304,7 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 
 	if(werr != WAV_NO_ERR) {
 		(void)_tprintf_s(_T("Unexpected error doing wavWrite()!\n"));
-		return;
+		goto SILENT_STRIPPER_CLEANUP;
 	}//if
 
 
@@ -300,6 +327,9 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 	} //else
 
 
+SILENT_STRIPPER_CLEANUP:
+
+	//closeWavFile() and free() both do nothing for NULL
 	closeWavFile(wf);
 	closeWavFile(writeWF);
 	wf = NULL;
@@ -309,7 +339,7 @@ void silentStripper(_TCHAR* inFile, _TCHAR *outFile, float silenceThresh, UINT32
 
 	free((void*)fbufPadBegin);
 	free((void*)fbufPadEnd);
-	
+
 } //testWavInOut()
 
 
@@ -321,19 +351,15 @@ char * wstrdup(_TCHAR * wSrc)
 
 	if (sizeof(TCHAR) == sizeof(wchar_t))
 	{
-		int l_idx=0;
 		int l_len = _tcslen(wSrc);
 		l_nstr = (char*)malloc(l_len+1);
 
-		size_t st = 0;
-		wcstombs_s(&st, l_nstr, l_len+1, (wchar_t*)wSrc, strlen((char*)wSrc));
+		//copy at most l_len chars (narrowing each one), so an empty string can't overrun l_nstr
 		if (l_nstr) {
-			do {
+			for(int l_idx=0 ; l_idx<l_len ; l_idx++)
 				l_nstr[l_idx] = (char)wSrc[l_idx];
-				l_idx++;
-			} while ((char)wSrc[l_idx]!=0);
+			l_nstr[l_len] = 0;
 		}
-		l_nstr[l_idx] = 0;
 	}
 	else //must be 8 bit
 	{
@@ -409,6 +435,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		return -1;
 	}
 
+	//the code below indexes the last char of both, and outFile is a fixed size buffer
+	if(_tcslen(argv[1]) == 0 || _tcslen(argv[2]) == 0 || _tcslen(argv[2]) >= 1024)
+	{
+		(void)_tprintf_s(_T("Bad args! inFile and outFile must not be empty, and outFile must be under 1024 chars.\n"));
+		return -1;
+	}
+
 	inFile = argv[1];
 	_tcscpy_s( outFile, argv[2]);
 
@@ -429,6 +462,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
 	ch_inFile = wstrdup(inFile);
+
+	if(ch_inFile == NULL)
+	{
+		(void)_tprintf_s(_T("Failed to malloc() ch_inFile.\n"));
+		return -1;
+	}
 
 
 
@@ -486,15 +525,23 @@ int _tmain(int argc, _TCHAR* argv[])
 
 				if(tc_d_name != NULL)
 				{
-					_tcscpy_s(incrInFile, 1024, inFile);
-					_tcscat(incrInFile, tc_d_name);
+					if(_tcslen(inFile) + _tcslen(tc_d_name) >= 1024 ||
+						_tcslen(outFile) + _tcslen(tc_d_name) >= 1024)
+					{
+						(void)_tprintf_s(_T("Path too long, skipping: %s\n"), tc_d_name);
+					}
+					else
+					{
+						_tcscpy_s(incrInFile, 1024, inFile);
+						_tcscat_s(incrInFile, 1024, tc_d_name);
 
-					_tcscpy_s(incrOutFile, 1024, outFile);
-					_tcscat(incrOutFile, tc_d_name);
+						_tcscpy_s(incrOutFile, 1024, outFile);
+						_tcscat_s(incrOutFile, 1024, tc_d_name);
 
-					(void)_tprintf_s(_T("attempting: %s to %s "), incrInFile, incrOutFile);
-					
-					silentStripper(incrInFile, incrOutFile, sThresh, env_ms, beginPad_ms, endPad_ms);
+						(void)_tprintf_s(_T("attempting: %s to %s "), incrInFile, incrOutFile);
+
+						silentStripper(incrInFile, incrOutFile, sThresh, env_ms, beginPad_ms, endPad_ms);
+					}
 					free(tc_d_name);
 				}
 			}
@@ -510,6 +557,7 @@ int _tmain(int argc, _TCHAR* argv[])
     {
 		(void)_tprintf_s(_T("Could not parse dir: "));
 		printf("%s\n", ch_inFile);
+		free(ch_inFile);
 		return -1;
     }
 

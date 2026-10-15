@@ -71,6 +71,8 @@ bool SOLAFS_UpdateStream(
 			UINT32 *				CurrOutPos
 			);
 
+void SOLAFS_EndStream(); //frees what SOLAFS_BeginStream() allocated
+
 bool SOLAFS_readFile(WAV_FILE InWavFile,
 					 CIRCULAR_FLOAT_BUFFER OutBuf,
 					 UINT32 TargetVirtStartPos,

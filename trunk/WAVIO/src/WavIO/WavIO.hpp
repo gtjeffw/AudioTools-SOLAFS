@@ -280,14 +280,15 @@ enum WAV_ERR wavWriteFinalize(WAV_FILE w);
 // closeWavFile
 //-------------------------------------------------------------------------------------------------
 ///
-/// @brief Close the FILE within a WAV_FILE
+/// @brief Close the FILE within a WAV_FILE and free the WAV_FILE
 ///
 /// @param[in,out]		wf	Pointer to WAV_FILE that contains open FILE
 ///
-/// @pre	wf must be non-null and point to valid memory on the heap (originally created with createWavFile())
+/// @pre	wf must be NULL, or point to valid memory on the heap (originally created with createWavFile())
 ///
-/// @post	if an open FILE exists, it is closed and zeroed (NULL)
-/// @post	if FILE is NULL, does nothing
+/// @post	if an open FILE exists, it is closed
+/// @post	wf (and its WAV_INFO) are freed and must not be used again
+/// @post	if wf is NULL, does nothing
 /// @post	undefined behavior if wf points to invalid memory
 ///
 void closeWavFile(WAV_FILE wf);

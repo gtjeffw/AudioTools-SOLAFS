@@ -184,12 +184,7 @@ void freeWavInfo(WAV_INFO wi) {
 //-------------------------------------------------------------------------------------------------
 
 void closeWavFile(WAV_FILE wf) {
-	if(wf != NULL) {
-		if(wf->fp != NULL) {
-			(void)fclose(wf->fp);
-		} //if
-		wf->fp = NULL;
-	} //if
+	freeWavFile(wf);
 } //closeWavFile()
 
 //-------------------------------------------------------------------------------------------------
@@ -215,7 +210,8 @@ void freeWavFile(WAV_FILE wf)
 			freeWavInfo(wf->wavInfo);
 
 		//close open file, if needed
-		closeWavFile(wf);
+		if(wf->fp != NULL)
+			(void)fclose(wf->fp);
 
 		wf->fp = NULL;
 
@@ -563,6 +559,7 @@ enum WAV_ERR wavOpenForRead(_TCHAR * filePath, WAV_FILE * wf)
 	//this will need to change if support for 8bit is added
 	if(ret->wavInfo->bitsPerSample <= 8) {
 
+		freeWavFile(ret);
 		return WAV_ERR_FILE_BPS_UNSUP;
 
 	} //if

@@ -204,7 +204,9 @@ bool SOLAFS_PerformCrossFade(CIRCULAR_FLOAT_BUFFER OutBuf, UINT32 OutBuf_VirtPos
 	gMaxSkew = MaxSkew;
 	gCrossCorrDecimationFactor = CrossCorrDecimationFactor;
 	gSkewDecimationFactor = SkewDecimationFactor;
-									
+
+	gAnalysisFraction = 0.0; //don't carry a fraction over from a previous stream
+
 	double analysis = gAnalysisFraction + (double)(gInToOutRatio * gSynthesisDistance);
 	double analWholeNum = floor(analysis);
 	gAnalysisFraction = analysis - analWholeNum;
@@ -345,8 +347,19 @@ bool SOLAFS_UpdateStream(
 
 
 	*NextPredInPos = gInPos;
-	
+
 	return true;
+}
+
+
+void SOLAFS_EndStream()
+//frees what SOLAFS_BeginStream() allocated
+{
+	if(gCrossFade != NULL)
+	{
+		free(gCrossFade);
+		gCrossFade = NULL;
+	}
 }
 
 
@@ -715,6 +728,8 @@ bool SOLAFS(
 	ret = true;
 
 SOLAFS_CLEANUP:
+
+	SOLAFS_EndStream();
 
 	if(InBuf != NULL)
 		(void)CFB_delete(InBuf);

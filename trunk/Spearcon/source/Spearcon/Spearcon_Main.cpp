@@ -198,22 +198,21 @@ bool processArgs(int argc, _TCHAR* argv[],
 	bool timeModeSet = false;
 	bool compModeSet = false;
 
-	_TCHAR * tokContext = NULL;
-
 	for(int i = 1 ; i<argc ; i++)
 	{
 		_TCHAR * param;
 		_TCHAR * strVal;
 
-		param = _tcstok_s(argv[i], _T(":"), &tokContext);
-		//strVal = _tcstok_s(NULL, _T(":"), &tokContext);
+		//split on the FIRST ":" only, so a ":" in a file path for in/out files is kept in strVal
+		//(an arg with no ":" is invalid; without this check strVal would point past the end of argv[i])
+		strVal = _tcschr(argv[i], _T(':'));
 
-		if(param == NULL)// || strVal == NULL)
+		if(strVal == NULL)
 			return false;
 
-		//quick hack to deal with possibility of a ":" in file path for in/out files
-		//strVal = &(argv[i][strVal - param]);
-		strVal = param+_tcslen(param)+1; //_tcslen(argv[i])-param]);
+		*strVal = _T('\0');
+		strVal++;
+		param = argv[i];
 
 		if(0 == _tcscmp(_T("INFILE"), param))
 		{
