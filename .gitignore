@@ -1,0 +1,16 @@
+# Visual Studio build output and IDE files
+Debug/
+Release/
+*.obj
+*.pdb
+*.ilk
+*.ncb
+*.suo
+*.user
+*.sdf
+*.opensdf
+ipch/
+.vs/
+
+.DS_Store
+Thumbs.db
