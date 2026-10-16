@@ -282,9 +282,10 @@ bool SOLAFS_UpdateStream(
 		
 		gSkewPred = gSkew + gProcessDiff;
 
-		//seems like it might be a good thing to make sure gSkewPred is a multiple
-		//of gSkewDecimationFactor
-		gSkewPred = (gSkewPred / gSkewDecimationFactor)*gSkewDecimationFactor;
+		//NOTE: don't round gSkewPred to a multiple of gSkewDecimationFactor.  The prediction is
+		//only valid (and skipping the cross-fade only safe) when it is exact: then the input at
+		//gInPos+gSkewPred is identical to the output overlap region (Hejna & Musicus section 3).
+		//Rounding it gave hard, un-faded splices whenever the skew decimation factor was > 1.
 
 		//for testing! (forces predication failure)
 		//gSkewPred = gMaxSkew + 100;
