@@ -66,7 +66,6 @@ UINT32 SOLAFS_FindSkew(CIRCULAR_FLOAT_BUFFER X, UINT32 X_VirtPos,
 	double best_R_xy = 0.0;
 
 	double rxy = 0.0;
-	double norm_rxy = 0.0;
 	double rxx = 0.0;
 	//double ryy = 0.0;
 	double R_xy = 0.0;
@@ -85,7 +84,6 @@ UINT32 SOLAFS_FindSkew(CIRCULAR_FLOAT_BUFFER X, UINT32 X_VirtPos,
 	for(k=0 ; k<MaxSkew ; k+=SkewDecimationFactor)
 	{
 		rxy = 0.0;
-		norm_rxy = 0.0;
 		rxx = 0.0;
 		//ryy = 0.0;
 
@@ -99,19 +97,20 @@ UINT32 SOLAFS_FindSkew(CIRCULAR_FLOAT_BUFFER X, UINT32 X_VirtPos,
 
 			xy = (double)xSample * (double)ySample;
 			rxy += xy;
-			norm_rxy += xy*xy;
 			rxx += (double)xSample * (double)xSample;
 			//ryy += (double)ySample * (double)ySample;
 
 		} //for
 
-		norm_rxy = sqrt(norm_rxy);
-
+		//Hejna & Musicus eq. (6) (patent US 5,175,769 eqn. (15), FIG. 6 box 640):
+		//r_xy*|r_xy| / r_xx.  Same ranking as the normalized cross-correlation
+		//r_xy / sqrt(r_xx*r_yy) (r_yy is constant over k), without the square root.
+		//(This used to multiply by sqrt(sum((x*y)^2)) instead of |r_xy|, which ranks skews differently.)
 		if(rxx == 0.0 )
 			//|| ryy == 0.0)
 			R_xy = 0.0;
 		else
-			R_xy = (rxy * norm_rxy) / rxx; //(rxx * ryy);
+			R_xy = (rxy * fabs(rxy)) / rxx;
 
 		if(R_xy > best_R_xy)
 		{
