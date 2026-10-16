@@ -19,7 +19,7 @@ There are two ways to use it:
 |---|---|
 | `web/` | Spearcon Factory web app (Vite + React + TypeScript) and the WebAssembly build of the engine |
 | `native/SOLAFS/` | SOLAFS itself (`src/SOLAFS/SOLAFS.cpp`); `project/SOLAFS/SOLAFS.sln` is the Visual Studio solution for everything |
-| `native/SOLAFS/src/SOLAFS/docs/` | references: Ellis's MATLAB `solafs.m` (original and modified) and US patent 5,175,769, which describes the same algorithm |
+| `native/SOLAFS/src/SOLAFS/docs/` | references: notes on the changes made to Ellis's MATLAB `solafs.m` while porting it, and US patent 5,175,769, which describes the same algorithm |
 | `native/WAVIO/`, `native/CIRCULAR_BUFFER/` | WAV file I/O and the circular buffer SOLAFS streams through |
 | `native/Spearcon/` | `spearcon.exe` |
 | `native/SilentStripper/` | `SilentStripper.exe` |
@@ -172,6 +172,18 @@ engine is built, using `web/wasm/compat/tchar.h` in place of Windows' `<tchar.h>
   `native/SOLAFS/src/SOLAFS/docs/US5175769.pdf`. It covers the same algorithm, including the shift-prediction
   derivation that's on the missing page (columns 9–10), and gives a flowchart (FIGs. 5–7).
 - D. Ellis, `solafs.m`, the MATLAB implementation this C++ was ported from: <https://www.ee.columbia.edu/~dpwe/LabROSA/matlab/solafs-matlab.html>.
+  `native/SOLAFS/src/SOLAFS/docs/solafs-matlab-notes.md` records the changes made to it while porting.
+
+## License
+
+MIT (see `LICENSE`). Copyright © 2009–2026 Georgia Institute of Technology, Jeff Wilson. The original tools were
+written at Georgia Tech's Interactive Media Technology Center.
+
+Third-party material keeps its own terms:
+
+- `native/SilentStripper/source/SilentStripper/dirent.c` and `dirent.h`: © Kevlin Henney, under the permissive
+  notice in those files.
+- `native/SOLAFS/src/SOLAFS/docs/US5175769.pdf`: a US patent, in the public domain. The patent expired in 2011.
 
 ## History
 

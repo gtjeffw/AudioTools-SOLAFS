@@ -233,7 +233,7 @@ export default function App() {
 
       <footer className="foot">
         <p>Based on SOLAFS time-scale modification (Hejna &amp; Musicus, 1991).</p>
-        <p>© 2026 Jeff Wilson</p>
+        <p>© 2009–2026 Georgia Institute of Technology, Jeff Wilson. Released under the MIT License.</p>
       </footer>
       <UpdatePrompt />
     </div>
