@@ -21,7 +21,7 @@ export interface Settings extends LengthSettings {
 const SAMPLES_AT_44K = (n: number) => Math.round((n / 44.1) * 1e4) / 1e4;
 
 /** What spearcon.exe does with no options: log length, no trimming, fades or padding. */
-export const SPEARCON_EXE: Settings = {
+const SPEARCON_EXE: Settings = {
   lengthMode: "log",
   logA: 1.0,
   logB: 0.25,

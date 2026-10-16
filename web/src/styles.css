@@ -12,13 +12,44 @@
   --accent-ink: #ffffff;
   --accent-wash: rgba(42, 120, 214, 0.1);
   --error: #c03636;
+  --drop-bg: #d6e1f0;
+  --drop-border: #7f9cc3;
+  --drop-over-bg: #c3d5ee;
+  --drop-link: #1c5cab;
+  --drop-btn-bg: #ffffff;
+  --drop-btn-border: #7f9cc3;
   --radius: 10px;
   font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
   background: var(--page);
   color: var(--text);
 }
+/* Theme: data-theme="light" or "dark" on <html> forces one; without it the system setting decides
+   (src/theme.ts). The dark values appear twice because a media query and an attribute selector
+   can't share one rule. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface: #1a1a19;
+  --raised: #232321;
+  --text: #f0efec;
+  --text-2: #c3c2b7;
+  --muted: #898781;
+  --line: #2c2c2a;
+  --line-strong: #44443f;
+  --accent: #3987e5;
+  --accent-wash: rgba(57, 135, 229, 0.16);
+  --error: #e66767;
+  --drop-bg: #1d2a3b;
+  --drop-border: #3d5a80;
+  --drop-over-bg: #263a55;
+  --drop-link: #6da7ec;
+  --drop-btn-bg: #33332f;
+  --drop-btn-border: #6b6b64;
+}
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --page: #0d0d0d;
     --surface: #1a1a19;
     --raised: #232321;
@@ -30,6 +61,12 @@
     --accent: #3987e5;
     --accent-wash: rgba(57, 135, 229, 0.16);
     --error: #e66767;
+    --drop-bg: #1d2a3b;
+    --drop-border: #3d5a80;
+    --drop-over-bg: #263a55;
+    --drop-link: #6da7ec;
+    --drop-btn-bg: #33332f;
+    --drop-btn-border: #6b6b64;
   }
 }
 
@@ -42,10 +79,13 @@ h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: 
 p { margin: 0; }
 
 .app { max-width: 1240px; margin: 0 auto; padding: 24px 20px 40px; }
-.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+.top .privacy { margin-top: 4px; }
 .tagline { color: var(--text-2); }
+.theme-select { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); flex-shrink: 0; }
+.theme-select select { width: auto; font-size: 13px; padding: 3px 6px; }
 .privacy { font-size: 13px; color: var(--muted); }
-.foot { margin-top: 32px; font-size: 12px; color: var(--muted); }
+.foot { margin-top: 32px; font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
 
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
 @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
@@ -95,11 +135,14 @@ button.primary { background: var(--accent); border-color: var(--accent); color: 
 button.link { padding: 0; border: 0; background: none; color: var(--accent); text-decoration: underline; font-weight: 600; }
 
 .dropzone {
-  border: 2px dashed var(--line-strong); border-radius: var(--radius); background: var(--surface);
+  border: 2px dashed var(--drop-border); border-radius: var(--radius); background: var(--drop-bg);
   padding: 48px 20px; text-align: center; display: flex; flex-direction: column; gap: 6px; transition: background 0.1s;
 }
 .dropzone.compact { padding: 14px; }
-.dropzone.over { border-color: var(--accent); background: var(--accent-wash); }
+.dropzone .note { color: var(--text-2); }
+.dropzone button.link { color: var(--drop-link); }
+.dropzone .demo-btn { margin-left: 12px; vertical-align: 1px; background: var(--drop-btn-bg); border-color: var(--drop-btn-border); }
+.dropzone.over { border-color: var(--accent); border-style: solid; background: var(--drop-over-bg); }
 
 .toolbar { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
 .toolbar .field { width: 110px; }

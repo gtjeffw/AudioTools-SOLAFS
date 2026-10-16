@@ -6,7 +6,9 @@ import { DropZone, isAudioFile } from "./components/DropZone";
 import { FileTable } from "./components/FileTable";
 import { NumberField } from "./components/NumberField";
 import { SettingsPanel } from "./components/SettingsPanel";
+import { ThemeSelect } from "./components/ThemeSelect";
 import { UpdatePrompt } from "./components/UpdatePrompt";
+import { DEMO_TARGET_SEC, loadDemoFiles } from "./demo";
 import { makeSpearcon } from "./engine/pipeline";
 import { CancelledError, EnginePool } from "./engine/pool";
 import { baseName, buildZip, download, outputNames } from "./export/zip";
@@ -73,14 +75,30 @@ export default function App() {
   }, [audioKey, processOne]);
 
   const addFiles = useCallback(
-    (files: File[]) => {
+    (files: File[], s: Settings = settingsRef.current) => {
       const added: ClipItem[] = files.map((file) => ({ id: nextId++, file, name: file.name, status: "decoding" }));
       dispatch({ type: "add", items: added });
       itemsRef.current = [...itemsRef.current, ...added];
-      for (const it of added) void processOne(it, settings, generation.current);
+      for (const it of added) void processOne(it, s, generation.current);
     },
-    [processOne, settings],
+    [processOne],
   );
+
+  // Demo: four test recordings, made into 0.2 s spearcons.
+  const [demoError, setDemoError] = useState<string | null>(null);
+  const loadDemo = useCallback(async () => {
+    setDemoError(null);
+    try {
+      const have = new Set(itemsRef.current.map((it) => it.name));
+      const files = (await loadDemoFiles()).filter((f) => !have.has(f.name)); // don't add them twice
+      const s: Settings = { ...settingsRef.current, lengthMode: "length", targetSec: DEMO_TARGET_SEC };
+      settingsRef.current = s;
+      setSettings(s);
+      if (files.length) addFiles(files, s);
+    } catch (err) {
+      setDemoError(err instanceof Error ? err.message : String(err));
+    }
+  }, [addFiles]);
 
   // Installed PWA: audio files opened with the app (manifest file_handlers).
   useEffect(() => {
@@ -156,13 +174,15 @@ export default function App() {
         <div>
           <h1>Spearcon Factory</h1>
           <p className="tagline">Speed speech up into spearcons, in batches, without changing its pitch.</p>
+          <p className="privacy">Runs entirely in your browser. Your audio never leaves this device.</p>
         </div>
-        <p className="privacy">Runs entirely in your browser. Your audio never leaves this device.</p>
+        <ThemeSelect />
       </header>
 
       <main className="layout">
         <section className="work">
-          <DropZone onFiles={addFiles} compact={items.length > 0} />
+          <DropZone onFiles={(files) => addFiles(files)} onDemo={loadDemo} compact={items.length > 0} />
+          {demoError && <p className="error-text">{demoError}</p>}
 
           {items.length > 0 && (
             <>
@@ -199,7 +219,8 @@ export default function App() {
       </main>
 
       <footer className="foot">
-        SOLAFS time-scale modification (Hejna &amp; Musicus, 1991), compiled from the AudioTools C++ to WebAssembly.
+        <p>Based on SOLAFS time-scale modification (Hejna &amp; Musicus, 1991).</p>
+        <p>© 2026 Jeff Wilson</p>
       </footer>
       <UpdatePrompt />
     </div>

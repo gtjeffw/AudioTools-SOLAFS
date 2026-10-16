@@ -1,5 +1,5 @@
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, searchForWorkspaceRoot } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
@@ -32,10 +32,13 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,wasm,svg,png,ico,webmanifest}"],
+        // wav: the demo clips, so "Load demo" works offline too
+        globPatterns: ["**/*.{js,css,html,wasm,svg,png,ico,webmanifest,wav}"],
         cleanupOutdatedCaches: true,
       },
     }),
   ],
   worker: { format: "es" },
+  // the demo clips live in ../native/bin/audio; let the dev server serve them
+  server: { fs: { allow: [searchForWorkspaceRoot(process.cwd()), "../native/bin/audio"] } },
 });

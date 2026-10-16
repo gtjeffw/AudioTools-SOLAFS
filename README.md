@@ -40,8 +40,10 @@ There are two ways to use it:
 - **Listen** to the original or the spearcon of any row, or **Play all** in sequence with a gap, the way a menu would.
 - **Export ZIP:** 16-bit WAVs named `<file>_spearcon.wav` (the suffix is configurable), plus `spearcon-settings.json`
   recording the settings and each clip's durations and speed ratio.
-- **Match spearcon.exe** sets everything to spearcon.exe's defaults. A 16-bit WAV at 44.1 kHz then produces the same
-  bytes as the command-line tool (see *Testing*).
+- **Load demo** adds four sample names from `native/bin/audio` and sets a 0.2 s target length.
+  **Reset to defaults** restores the default settings.
+- The defaults match spearcon.exe's, plus silence trimming and short fades. With trimming and fades turned off, a
+  16-bit WAV at 44.1 kHz produces the same bytes as the command-line tool (see *Testing*).
 
 **Developing** (Node 24, pinned in `web/.nvmrc`):
 

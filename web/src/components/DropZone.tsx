@@ -6,7 +6,13 @@ export function isAudioFile(f: File) {
   return f.type.startsWith("audio/") || /\.(wav|mp3|m4a|aac|ogg|oga|opus|flac|webm)$/i.test(f.name);
 }
 
-export function DropZone({ onFiles, compact }: { onFiles: (files: File[]) => void; compact: boolean }) {
+interface Props {
+  onFiles: (files: File[]) => void;
+  onDemo: () => void;
+  compact: boolean;
+}
+
+export function DropZone({ onFiles, onDemo, compact }: Props) {
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
   const take = (list: FileList | null) => {
@@ -34,6 +40,8 @@ export function DropZone({ onFiles, compact }: { onFiles: (files: File[]) => voi
       <p>
         <strong>Drop audio files here</strong> or{" "}
         <button type="button" className="link" onClick={() => input.current?.click()}>choose files</button>
+        <button type="button" className="btn-small demo-btn" onClick={onDemo}
+          title="Adds four sample names and sets the length to 0.2 s">Load demo</button>
       </p>
       {!compact && <p className="note">WAV, MP3, M4A, OGG, FLAC… anything your browser can play. Files stay on this device.</p>}
     </div>

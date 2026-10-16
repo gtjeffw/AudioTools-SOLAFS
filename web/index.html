@@ -9,6 +9,13 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
     <meta name="theme-color" content="#2a78d6" />
+    <script>
+      // apply the saved theme (src/theme.ts) before first paint
+      try {
+        var t = localStorage.getItem("spearcon-factory.theme");
+        if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

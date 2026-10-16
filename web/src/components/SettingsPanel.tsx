@@ -1,6 +1,6 @@
 import type { LengthMode } from "../engine/spearconMath";
 import { windowSamples } from "../engine/spearconMath";
-import { DEFAULTS, SAMPLE_RATES, SPEARCON_EXE, type Settings } from "../state/settings";
+import { DEFAULTS, SAMPLE_RATES, type Settings } from "../state/settings";
 import { NumberField } from "./NumberField";
 
 interface Props {
@@ -23,11 +23,7 @@ export function SettingsPanel({ settings: s, onChange }: Props) {
     <aside className="panel settings" aria-label="Settings">
       <div className="panel-head">
         <h2>Settings</h2>
-        <div className="row gap-s">
-          <button type="button" className="btn-small" onClick={() => onChange(DEFAULTS)}>Reset</button>
-          <button type="button" className="btn-small" onClick={() => onChange(SPEARCON_EXE)}
-            title="spearcon.exe defaults: no trimming, fades or padding, 44.1 kHz">Match spearcon.exe</button>
-        </div>
+        <button type="button" className="btn-small" onClick={() => onChange(DEFAULTS)}>Reset to defaults</button>
       </div>
 
       <section>
