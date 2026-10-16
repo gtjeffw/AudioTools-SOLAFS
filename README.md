@@ -83,7 +83,7 @@ alignment SOLAFS picks.
 | Root directory | `web` |
 | Build command | `npm run build` |
 | Build output directory | `dist` |
-| Build watch paths | `web/**` |
+| Build watch paths | `web/**`, `native/**` (the build bundles the demo clips from `native/bin/audio` and checks the engine against the C++ sources) |
 
 Node comes from `web/.nvmrc`. If the build ever uses a different version, set the environment variable
 `NODE_VERSION=24`. The build needs only Node, because the engine is committed. `web/public/_headers` sets caching:
