@@ -691,7 +691,15 @@ enum WAV_ERR waveWrite(WAV_FILE w, float * fbuf1, UINT32 rowSize, UINT16 numChan
 			writeVal = (UINT16)lrintf(normalizeFloat(v, -1.0, 1.0, (float)WAV_MIN_INT16, (float)WAV_MAX_INT16));
 #endif
 #else
-			writeVal = (UINT16)v;
+			//clamp, then go through INT16: casting a negative float straight to an unsigned type
+			//is undefined (it happens to work with MSVC on x86, but gives 0 on ARM).
+			//For in-range values this truncates toward zero, same as the old cast did on x86.
+			if(v > 32767.0f)
+				v = 32767.0f;
+			else if(v < -32768.0f)
+				v = -32768.0f;
+
+			writeVal = (UINT16)(INT16)v;
 #endif
 
 			if(!fWriteUINT16_LE(writeVal, w->fp))
