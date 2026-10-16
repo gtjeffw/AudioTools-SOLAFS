@@ -128,9 +128,11 @@ bool SOLAFS_PerformCrossFade(CIRCULAR_FLOAT_BUFFER OutBuf, UINT32 OutBuf_VirtPos
 							   CIRCULAR_FLOAT_BUFFER InBuf, UINT32 InBuf_VirtPos,
 							   float * XFade, UINT32 XFadeSize)
 //XFade must contain XFadeSize samples in the range [0.0f, 1.0f] (generally assumed lowest to highest)
-//OutBuf[OutBuf_VirtPos+i] = OutBuf[OutBuf_VirtPos+i]*XFade[XFadeSize-1-i] + 
+//OutBuf[OutBuf_VirtPos+i] = OutBuf[OutBuf_VirtPos+i]*(1-XFade[i]) +
 //								InBuf[InBuf_VirtPos+i]*XFade[i]
 //where i=[0,XFadeSize-1]
+//(complementary weights, as in Hejna & Musicus eq. (2), so the two always sum to 1.  This used
+//to weight OutBuf by XFade[XFadeSize-1-i], which for a linear ramp only sums to (n-1)/n.)
 {
 	UINT32 vpsOut = CFG_virtualPosStart(OutBuf);
 	UINT32 vpsIn = CFG_virtualPosStart(InBuf);
@@ -154,7 +156,7 @@ bool SOLAFS_PerformCrossFade(CIRCULAR_FLOAT_BUFFER OutBuf, UINT32 OutBuf_VirtPos
 	{
 		UINT32 jmask = j&OutBuf->mask;
 		UINT32 kmask = k&InBuf->mask;
-		float highXFade = XFade[XFadeSize - 1 - i];
+		float highXFade = 1.0f - XFade[i];
 		float lowXFade = XFade[i];
 
 		float inVal = InBuf->buf[kmask];
@@ -243,9 +245,9 @@ bool SOLAFS_PerformCrossFade(CIRCULAR_FLOAT_BUFFER OutBuf, UINT32 OutBuf_VirtPos
 	if(gCrossFade == NULL)
 		return false;
 
-	//linear cross-fade
+	//linear cross-fade, symmetric and strictly inside (0,1) like Ellis's solafs.m: (1:Wov)/(Wov+1)
 	for(UINT32 i=0 ; i<gWindowOverlap ; i++)
-		gCrossFade[i] = (i) / (float)gWindowOverlap;
+		gCrossFade[i] = (i+1) / (float)(gWindowOverlap+1);
 
 
 	return true;
