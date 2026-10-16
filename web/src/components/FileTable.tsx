@@ -37,11 +37,11 @@ export function FileTable({ items, playingId, onPlayInput, onPlayOutput, onDownl
                     <span className="muted">{it.status === "decoding" ? "Decoding…" : "Processing…"}</span>
                   )}
                 </td>
-                <td className="num" title={it.input && it.decodedRate ? `Original: ${sec(it.input.length / it.decodedRate)}` : undefined}>
+                <td className="num" data-label="Input" title={it.input && it.decodedRate ? `Original: ${sec(it.input.length / it.decodedRate)}` : undefined}>
                   {sec(it.trimmedSeconds)}
                 </td>
-                <td className="num">{sec(outSec)}</td>
-                <td className="num">{it.ratio ? `${it.ratio.toFixed(2)}×` : "–"}</td>
+                <td className="num" data-label="Output">{sec(outSec)}</td>
+                <td className="num" data-label="Ratio">{it.ratio ? `${it.ratio.toFixed(2)}×` : "–"}</td>
                 <td className="listen">
                   <button type="button" className="btn-small" disabled={!it.input} onClick={() => onPlayInput(it)}>Original</button>
                   <button type="button" className="btn-small primary" disabled={it.status !== "done"} onClick={() => onPlayOutput(it)}>
