@@ -41,9 +41,9 @@ export function DropZone({ onFiles, onDemo, compact }: Props) {
         <strong>Drop audio files here</strong> or{" "}
         <button type="button" className="link" onClick={() => input.current?.click()}>choose files</button>
         <button type="button" className="btn-small demo-btn" onClick={onDemo}
-          title="Adds four sample names and sets the length to 0.2 s">Load demo</button>
+          title="Loads four example recordings and sets a fixed output duration of 0.2 s">Load demo</button>
       </p>
-      {!compact && <p className="note">WAV, MP3, M4A, OGG, FLAC… anything your browser can play. Files stay on this device.</p>}
+      {!compact && <p className="note">WAV, MP3, M4A, OGG, FLAC and other formats supported by the browser.</p>}
     </div>
   );
 }

@@ -14,7 +14,7 @@ export async function loadDemoFiles(): Promise<File[]> {
   return Promise.all(
     DEMO_URLS.map(async ([name, url]) => {
       const res = await fetch(url);
-      if (!res.ok) throw new Error(`Couldn't load demo clip ${name}`);
+      if (!res.ok) throw new Error(`The example recording ${name} could not be loaded`);
       return new File([await res.blob()], name, { type: "audio/wav" });
     }),
   );

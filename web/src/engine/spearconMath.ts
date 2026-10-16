@@ -31,19 +31,19 @@ export function planRatio(s: LengthSettings, numSamples: number, sampleRate: num
   switch (s.lengthMode) {
     case "log": {
       const newLen = s.logA * Math.log10(fileLen + 1.0) + s.logB;
-      if (!(newLen > 0)) return { ok: false, error: "Log formula gives an output length of zero or less" };
+      if (!(newLen > 0)) return { ok: false, error: "The logarithmic formula gives an output duration of zero or less" };
       ratio = fileLen / newLen;
       break;
     }
     case "length":
-      if (!(s.targetSec > 0)) return { ok: false, error: "Target length must be more than 0" };
+      if (!(s.targetSec > 0)) return { ok: false, error: "The output duration must be greater than 0" };
       ratio = fileLen / s.targetSec;
       break;
     case "ratio":
       ratio = s.ratio;
       break;
   }
-  if (!(ratio > 0) || !Number.isFinite(ratio)) return { ok: false, error: "Speed ratio must be more than 0" };
+  if (!(ratio > 0) || !Number.isFinite(ratio)) return { ok: false, error: "The compression ratio must be greater than 0" };
 
   let ratioStep = 0;
   if (s.ramp) {
@@ -54,10 +54,10 @@ export function planRatio(s: LengthSettings, numSamples: number, sampleRate: num
     const outFileNumSamples = Math.trunc(inFileNumSamples / ratio);
     const N = Math.trunc(outFileNumSamples / SD) - 2;
     const startRatio = s.rampStartRatio;
-    if (N < 1) return { ok: false, error: "Output too short for a speed-up ramp" };
-    if (!(startRatio > 0)) return { ok: false, error: "Ramp start ratio must be more than 0" };
+    if (N < 1) return { ok: false, error: "The output is too short for progressive compression" };
+    if (!(startRatio > 0)) return { ok: false, error: "The initial ratio must be greater than 0" };
     const m = ((inFileNumSamples / SD - N * startRatio) * 2) / (N * (N + 1));
-    if (!(startRatio + N * m > 0)) return { ok: false, error: "Ramp start ratio is too high for this length" };
+    if (!(startRatio + N * m > 0)) return { ok: false, error: "The initial ratio is too high for this output duration" };
     ratio = startRatio;
     ratioStep = m;
     return { ok: true, ratio, ratioStep, outSeconds: outFileNumSamples / sampleRate };
@@ -73,8 +73,8 @@ export function windowSamples(windowMs: number, overlapMs: number, maxSkewMs: nu
   const window = toSamples(windowMs);
   const overlap = toSamples(overlapMs);
   const maxSkew = toSamples(maxSkewMs);
-  if (overlap < 1 || window < 2 || maxSkew < 1) return { ok: false, error: "Window, overlap and max skew must be at least 1 sample" };
-  if (2 * overlap > window) return { ok: false, error: "Overlap can be at most half the window" };
+  if (overlap < 1 || window < 2 || maxSkew < 1) return { ok: false, error: "Window length, overlap and maximum skew must each be at least one sample" };
+  if (2 * overlap > window) return { ok: false, error: "The overlap must not exceed half the window length" };
   return { ok: true, window, overlap, maxSkew };
 }
 

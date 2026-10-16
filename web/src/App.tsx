@@ -4,11 +4,14 @@ import { Player } from "./audio/player";
 import { encodeWav16 } from "./audio/wav";
 import { DropZone, isAudioFile } from "./components/DropZone";
 import { FileTable } from "./components/FileTable";
+import { InstallButton } from "./components/InstallButton";
 import { NumberField } from "./components/NumberField";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { ThemeSelect } from "./components/ThemeSelect";
 import { UpdatePrompt } from "./components/UpdatePrompt";
 import { DEMO_TARGET_SEC, loadDemoFiles } from "./demo";
+import logoDark from "./assets/logo-dark.png";
+import logoLight from "./assets/logo-light.png";
 import { makeSpearcon } from "./engine/pipeline";
 import { CancelledError, EnginePool } from "./engine/pool";
 import { baseName, buildZip, download, outputNames } from "./export/zip";
@@ -55,7 +58,7 @@ export default function App() {
       } catch (err) {
         if (err instanceof CancelledError) return;
         const msg = err instanceof Error ? err.message : String(err);
-        update({ status: "error", error: /decod/i.test(msg) ? "Couldn't decode this file" : msg, output: undefined });
+        update({ status: "error", error: /decod/i.test(msg) ? "This file could not be decoded" : msg, output: undefined });
       }
     },
     [pool],
@@ -171,19 +174,31 @@ export default function App() {
   return (
     <div className="app">
       <header className="top">
-        <div>
-          <h1>Spearcon Factory</h1>
-          <p className="tagline">Speed speech up into spearcons, in batches, without changing its pitch.</p>
-          <p className="privacy">Runs entirely in your browser. Your audio never leaves this device.</p>
+        <div className="brand">
+          {/* two versions: the dark one has a lighter outline so it shows on the dark page */}
+          <img className="logo-light" src={logoLight} alt="" width={201} height={128} />
+          <img className="logo-dark" src={logoDark} alt="" width={201} height={128} />
+          <div>
+            <h1>
+              <span className="title-1">Spearcon</span> <span className="title-2">Factory</span>
+            </h1>
+            <p className="tagline">Batch generation of spearcons: speech compressed in time with the SOLAFS algorithm, which preserves pitch.</p>
+            <p className="privacy">All processing takes place locally in the browser; audio files are not uploaded.</p>
+          </div>
         </div>
-        <ThemeSelect />
+        <div className="top-actions">
+          <InstallButton />
+          <ThemeSelect />
+        </div>
       </header>
 
       <main className="layout">
-        <section className="work">
-          <DropZone onFiles={(files) => addFiles(files)} onDemo={loadDemo} compact={items.length > 0} />
-          {demoError && <p className="error-text">{demoError}</p>}
+        <DropZone onFiles={(files) => addFiles(files)} onDemo={loadDemo} compact={items.length > 0} />
+        {demoError && <p className="error-text">{demoError}</p>}
 
+        <SettingsPanel settings={settings} onChange={setSettings} />
+
+        <section className="work" aria-label="Files">
           {items.length > 0 && (
             <>
               <div className="toolbar">
@@ -192,7 +207,7 @@ export default function App() {
                 ) : (
                   <button type="button" onClick={playAll} disabled={!done.length}>Play all</button>
                 )}
-                <NumberField label="Gap" value={settings.playGapMs} step={50} min={0} unit="ms"
+                <NumberField label="Interval" value={settings.playGapMs} step={50} min={0} unit="ms"
                   onChange={(v) => setSettings({ ...settings, playGapMs: v })} />
                 <span className="spacer" />
                 <span className="muted">{busy ? "Processing…" : `${done.length} of ${items.length} ready`}</span>
@@ -200,7 +215,7 @@ export default function App() {
                   Export ZIP
                 </button>
                 <button type="button" onClick={() => { stop(); decoded.current.clear(); dispatch({ type: "clear" }); }}>
-                  Clear
+                  Clear list
                 </button>
               </div>
               <FileTable
@@ -214,8 +229,6 @@ export default function App() {
             </>
           )}
         </section>
-
-        <SettingsPanel settings={settings} onChange={setSettings} />
       </main>
 
       <footer className="foot">

@@ -16,7 +16,7 @@ export async function makeSpearcon(
 ): Promise<PipelineResult> {
   const rate = s.sampleRate;
   const trimmed = s.trim ? trimSilence(input, rate, s.trimThresholdDb, s.trimMarginMs) : input;
-  if (!trimmed) return { ok: false, error: `Nothing louder than ${s.trimThresholdDb} dBFS (lower the trim threshold)` };
+  if (!trimmed) return { ok: false, error: `No signal above ${s.trimThresholdDb} dBFS; lower the trim threshold` };
   const trimmedSeconds = trimmed.length / rate;
 
   const win = windowSamples(s.windowMs, s.overlapMs, s.maxSkewMs, rate);
@@ -25,7 +25,7 @@ export async function makeSpearcon(
   const need = minInputSamples(win);
   if (trimmed.length < need) {
     const ms = (n: number) => `${Math.round((n / rate) * 1000)} ms`;
-    return { ok: false, error: `Too short (${ms(trimmed.length)}); these window settings need at least ${ms(need)}`, trimmedSeconds };
+    return { ok: false, error: `Too short (${ms(trimmed.length)}) for the current window settings, which require at least ${ms(need)}`, trimmedSeconds };
   }
 
   const plan = planRatio(s, trimmed.length, rate, win);

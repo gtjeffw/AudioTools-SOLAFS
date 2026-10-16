@@ -9,26 +9,27 @@ interface Props {
 }
 
 const MODES: { value: LengthMode; label: string }[] = [
-  { value: "log", label: "Log of length" },
-  { value: "length", label: "Target length" },
-  { value: "ratio", label: "Speed ratio" },
+  { value: "log", label: "Logarithmic" },
+  { value: "length", label: "Fixed duration" },
+  { value: "ratio", label: "Fixed ratio" },
 ];
 
 export function SettingsPanel({ settings: s, onChange }: Props) {
   const set = <K extends keyof Settings>(k: K, v: Settings[K]) => onChange({ ...s, [k]: v });
   const win = windowSamples(s.windowMs, s.overlapMs, s.maxSkewMs, s.sampleRate);
-  const samples = (n: number) => `${n} samples at ${s.sampleRate / 1000} kHz`;
+  const samples = (n: number) => `${n} samples`;
 
   return (
-    <aside className="panel settings" aria-label="Settings">
+    <section className="panel settings" aria-label="Settings">
       <div className="panel-head">
         <h2>Settings</h2>
         <button type="button" className="btn-small" onClick={() => onChange(DEFAULTS)}>Reset to defaults</button>
       </div>
 
+      <div className="settings-grid">
       <section>
-        <h3>Length</h3>
-        <div className="segmented" role="radiogroup" aria-label="Length mode">
+        <h3>Duration</h3>
+        <div className="segmented" role="radiogroup" aria-label="Duration mode">
           {MODES.map((m) => (
             <label key={m.value} className={s.lengthMode === m.value ? "on" : ""}>
               <input type="radio" name="mode" value={m.value} checked={s.lengthMode === m.value}
@@ -39,7 +40,7 @@ export function SettingsPanel({ settings: s, onChange }: Props) {
         </div>
         {s.lengthMode === "log" && (
           <>
-            <p className="note">Output seconds = A · log₁₀(input seconds + 1) + B</p>
+            <p className="note">Output duration (s) = A · log₁₀(input duration + 1) + B</p>
             <div className="grid2">
               <NumberField label="A" value={s.logA} step={0.05} onChange={(v) => set("logA", v)} />
               <NumberField label="B" value={s.logB} step={0.05} unit="s" onChange={(v) => set("logB", v)} />
@@ -47,75 +48,73 @@ export function SettingsPanel({ settings: s, onChange }: Props) {
           </>
         )}
         {s.lengthMode === "length" && (
-          <NumberField label="Every spearcon lasts" value={s.targetSec} step={0.05} min={0.01} unit="s"
+          <NumberField label="Output duration" value={s.targetSec} step={0.05} min={0.01} unit="s"
             onChange={(v) => set("targetSec", v)} />
         )}
         {s.lengthMode === "ratio" && (
-          <NumberField label="Speed-up" value={s.ratio} step={0.1} min={0.05} unit="×"
-            hint="Input length ÷ output length; below 1 slows down" onChange={(v) => set("ratio", v)} />
+          <NumberField label="Compression ratio" value={s.ratio} step={0.1} min={0.05} unit="×"
+            hint="Input duration ÷ output duration; values below 1 lengthen the audio" onChange={(v) => set("ratio", v)} />
         )}
         <label className="check">
           <input type="checkbox" checked={s.ramp} onChange={(e) => set("ramp", e.target.checked)} />
-          Speed-up ramp (start slower, end faster; same total length)
+          Progressive compression (the ratio increases over the clip; total duration is unchanged)
         </label>
         {s.ramp && (
-          <NumberField label="Starting speed" value={s.rampStartRatio} step={0.05} min={0.01} unit="×"
+          <NumberField label="Initial ratio" value={s.rampStartRatio} step={0.05} min={0.01} unit="×"
             onChange={(v) => set("rampStartRatio", v)} />
         )}
       </section>
 
       <section>
-        <h3>Clean-up</h3>
+        <h3>Pre- and post-processing</h3>
         <label className="check">
           <input type="checkbox" checked={s.trim} onChange={(e) => set("trim", e.target.checked)} />
-          Trim silence at the start and end first
+          Trim leading and trailing silence before compression
         </label>
         {s.trim && (
           <div className="grid2">
             <NumberField label="Threshold" value={s.trimThresholdDb} step={1} max={0} unit="dBFS"
               onChange={(v) => set("trimThresholdDb", v)} />
-            <NumberField label="Keep" value={s.trimMarginMs} step={1} min={0} unit="ms"
+            <NumberField label="Margin" value={s.trimMarginMs} step={1} min={0} unit="ms"
               onChange={(v) => set("trimMarginMs", v)} />
           </div>
         )}
         <div className="grid2">
           <NumberField label="Fade in" value={s.fadeInMs} step={1} min={0} unit="ms" onChange={(v) => set("fadeInMs", v)} />
           <NumberField label="Fade out" value={s.fadeOutMs} step={1} min={0} unit="ms" onChange={(v) => set("fadeOutMs", v)} />
-          <NumberField label="Pad start" value={s.padStartMs} step={5} min={0} unit="ms" onChange={(v) => set("padStartMs", v)} />
-          <NumberField label="Pad end" value={s.padEndMs} step={5} min={0} unit="ms" onChange={(v) => set("padEndMs", v)} />
+          <NumberField label="Leading silence" value={s.padStartMs} step={5} min={0} unit="ms" onChange={(v) => set("padStartMs", v)} />
+          <NumberField label="Trailing silence" value={s.padEndMs} step={5} min={0} unit="ms" onChange={(v) => set("padEndMs", v)} />
         </div>
       </section>
 
       <section>
         <h3>Output</h3>
-        <div className="grid2">
-          <label className="field">
-            <span className="field-label">Sample rate</span>
-            <select value={s.sampleRate} onChange={(e) => set("sampleRate", Number(e.target.value))}>
-              {SAMPLE_RATES.map((r) => <option key={r} value={r}>{r / 1000} kHz</option>)}
-            </select>
-          </label>
-          <label className="field">
-            <span className="field-label">File name suffix</span>
-            <input type="text" value={s.suffix} onChange={(e) => set("suffix", e.target.value)} />
-          </label>
-        </div>
+        <label className="field">
+          <span className="field-label">Sample rate</span>
+          <select value={s.sampleRate} onChange={(e) => set("sampleRate", Number(e.target.value))}>
+            {SAMPLE_RATES.map((r) => <option key={r} value={r}>{r / 1000} kHz</option>)}
+          </select>
+        </label>
+        <label className="field">
+          <span className="field-label">File name suffix</span>
+          <input type="text" value={s.suffix} onChange={(e) => set("suffix", e.target.value)} />
+        </label>
       </section>
 
-      <details>
-        <summary>SOLAFS window (advanced)</summary>
-        <div className="grid3">
-          <NumberField label="Window" value={s.windowMs} step={0.1} min={0.1} unit="ms"
+      <section>
+        <h3>SOLAFS window <span className="h3-note">advanced</span></h3>
+        <div className="grid2">
+          <NumberField label="Window length" value={s.windowMs} step={0.1} min={0.1} unit="ms"
             hint={win.ok ? samples(win.window) : undefined} onChange={(v) => set("windowMs", v)} />
           <NumberField label="Overlap" value={s.overlapMs} step={0.1} min={0.05} unit="ms"
             hint={win.ok ? samples(win.overlap) : undefined} onChange={(v) => set("overlapMs", v)} />
-          <NumberField label="Max skew" value={s.maxSkewMs} step={0.5} min={0.1} unit="ms"
+          <NumberField label="Maximum skew" value={s.maxSkewMs} step={0.5} min={0.1} unit="ms"
             hint={win.ok ? samples(win.maxSkew) : undefined} onChange={(v) => set("maxSkewMs", v)} />
         </div>
         {!win.ok && <p className="error-text">{win.error}</p>}
-        <p className="note">Max skew should exceed the longest pitch period in the speech (about 12.5 ms for an
-          80 Hz voice). Overlap can be at most half the window.</p>
-      </details>
-    </aside>
+        <p className="note">The maximum skew should exceed the longest expected pitch period (12.5 ms at 80 Hz).</p>
+      </section>
+      </div>
+    </section>
   );
 }

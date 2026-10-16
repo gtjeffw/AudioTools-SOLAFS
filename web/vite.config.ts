@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: "Spearcon Factory",
         short_name: "Spearcons",
-        description: "Make spearcons in batches: speed speech up without changing its pitch, using SOLAFS.",
+        description: "Batch generation of spearcons using the SOLAFS time-scale modification algorithm.",
         theme_color: "#2a78d6",
         background_color: "#f9f9f7",
         display: "standalone",

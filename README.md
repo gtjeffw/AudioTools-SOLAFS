@@ -6,9 +6,10 @@ time-scale modification algorithm that changes the speed of speech without chang
 
 There are two ways to use it:
 
-- **Spearcon Factory** (`web/`): a browser app. Drop in a batch of audio files, tune the settings, listen, and
-  export a ZIP of spearcons. It runs the same C++ SOLAFS code, compiled to WebAssembly, entirely on your device,
-  and works offline once installed as a PWA.
+- **Spearcon Factory** (`web/`): a Progressive Web App (PWA) for generating spearcons in batches. Audio files are
+  added by drag and drop, processed with configurable settings, auditioned, and exported together as a ZIP archive.
+  It runs the same C++ SOLAFS code, compiled to WebAssembly, entirely on the local device, and can be installed
+  for offline use.
 - **Command-line tools** (`native/`): the original C++ (Windows, Visual Studio). `spearcon.exe` makes one spearcon;
   `SilentStripper.exe` trims silence from a folder of WAV files.
 
@@ -26,24 +27,29 @@ There are two ways to use it:
 
 ## Spearcon Factory (web app)
 
-**Using it:** drop audio files onto the page (WAV, MP3, M4A, OGG, FLAC… anything the browser can decode).
+**Usage:** audio files are added by dropping them onto the page or selecting them (WAV, MP3, M4A, OGG, FLAC and
+other formats supported by the browser).
 
-- **Settings** apply to every file. Changing one re-processes the batch in parallel worker threads. Settings are
-  remembered in the browser.
-  - **Length:** how long each spearcon should be. *Log of length* (the spearcon.exe default) makes longer phrases
-    proportionally shorter: output seconds = A · log₁₀(input seconds + 1) + B. *Target length* makes every spearcon
-    the same length. *Speed ratio* applies a fixed speed-up.
-  - **Speed-up ramp:** starts slower and speeds up through the clip, keeping the same total length.
-  - **Clean-up:** trim leading and trailing silence first (recommended, since silence counts towards the input
-    length), then fade in/out and pad with silence.
-  - **SOLAFS window (advanced):** window, overlap and maximum skew, in milliseconds.
-- **Listen** to the original or the spearcon of any row, or **Play all** in sequence with a gap, the way a menu would.
-- **Export ZIP:** 16-bit WAVs named `<file>_spearcon.wav` (the suffix is configurable), plus `spearcon-settings.json`
-  recording the settings and each clip's durations and speed ratio.
-- **Load demo** adds four sample names from `native/bin/audio` and sets a 0.2 s target length.
+- **Settings** apply to all files; any change re-processes the batch in parallel Web Workers. Settings persist in
+  the browser.
+  - **Duration:** *Logarithmic* (the spearcon.exe default) compresses longer phrases proportionally more:
+    output duration (s) = A · log₁₀(input duration + 1) + B. *Fixed duration* gives every spearcon the same
+    duration; *Fixed ratio* applies a constant compression ratio.
+  - **Progressive compression:** the ratio increases over the course of the clip, leaving the total duration
+    unchanged.
+  - **Pre- and post-processing:** leading and trailing silence can be trimmed before compression (recommended,
+    since silence otherwise counts towards the input duration); fades and silence can be added afterwards.
+  - **SOLAFS window (advanced):** window length, overlap and maximum skew, in milliseconds.
+- **Playback** of the original or the spearcon for any file, or of all spearcons in sequence with a configurable
+  interval, as they would be heard in a menu.
+- **Export ZIP:** 16-bit WAV files named `<file>_spearcon.wav` (the suffix is configurable), with
+  `spearcon-settings.json` recording the settings and each file's durations and compression ratio.
+- **Load demo** adds four example recordings from `native/bin/audio` and sets a fixed duration of 0.2 s.
   **Reset to defaults** restores the default settings.
-- The defaults match spearcon.exe's, plus silence trimming and short fades. With trimming and fades turned off, a
-  16-bit WAV at 44.1 kHz produces the same bytes as the command-line tool (see *Testing*).
+- **Install** (Chromium-based browsers) installs the PWA directly; elsewhere, **Installation** describes the
+  procedure for the current platform.
+- The defaults are those of spearcon.exe, with silence trimming and short fades added. With trimming and fades
+  disabled, a 16-bit WAV at 44.1 kHz yields output byte-identical to the command-line tool (see *Testing*).
 
 **Developing** (Node 24, pinned in `web/.nvmrc`):
 

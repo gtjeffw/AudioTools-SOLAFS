@@ -19,9 +19,9 @@ export function FileTable({ items, playingId, onPlayInput, onPlayOutput, onDownl
           <tr>
             <th>File</th>
             <th className="num">Input</th>
-            <th className="num">Spearcon</th>
-            <th className="num">Speed</th>
-            <th>Listen</th>
+            <th className="num">Output</th>
+            <th className="num">Ratio</th>
+            <th>Playback</th>
             <th aria-label="Actions" />
           </tr>
         </thead>
@@ -50,7 +50,7 @@ export function FileTable({ items, playingId, onPlayInput, onPlayOutput, onDownl
                 </td>
                 <td className="actions">
                   <button type="button" className="btn-small" disabled={it.status !== "done"} onClick={() => onDownload(it)}
-                    title="Download this spearcon as WAV">WAV</button>
+                    title="Download this spearcon as a WAV file">WAV</button>
                   <button type="button" className="btn-icon" onClick={() => onRemove(it)} aria-label={`Remove ${it.name}`} title="Remove">×</button>
                 </td>
               </tr>

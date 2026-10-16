@@ -18,7 +18,7 @@ self.onmessage = async (e: MessageEvent<JobRequest>) => {
   let res: JobResponse;
   try {
     const out = (await enginePromise).run(samples, sampleRate, params);
-    res = out ? { id, ok: true, samples: out } : { id, ok: false, error: "SOLAFS could not process this clip" };
+    res = out ? { id, ok: true, samples: out } : { id, ok: false, error: "SOLAFS could not process this file" };
   } catch (err) {
     res = { id, ok: false, error: err instanceof Error ? err.message : String(err) };
   }

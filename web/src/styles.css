@@ -18,6 +18,10 @@
   --drop-link: #1c5cab;
   --drop-btn-bg: #ffffff;
   --drop-btn-border: #7f9cc3;
+  --title-1: #025f70; /* logo teal */
+  --title-2: #b7740f; /* logo amber, deepened for 3:1 on the light page */
+  --logo-light: inline-block;
+  --logo-dark: none;
   --radius: 10px;
   font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
   background: var(--page);
@@ -46,6 +50,10 @@
   --drop-link: #6da7ec;
   --drop-btn-bg: #33332f;
   --drop-btn-border: #6b6b64;
+  --title-1: #3fb0c6; /* logo teal, lightened for the dark page */
+  --title-2: #d69b3a; /* logo amber */
+  --logo-light: none;
+  --logo-dark: inline-block;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -67,39 +75,69 @@
     --drop-link: #6da7ec;
     --drop-btn-bg: #33332f;
     --drop-btn-border: #6b6b64;
+  --title-1: #3fb0c6; /* logo teal, lightened for the dark page */
+  --title-2: #d69b3a; /* logo amber */
+  --logo-light: none;
+  --logo-dark: inline-block;
   }
 }
 
 * { box-sizing: border-box; }
 body { margin: 0; }
 h1, h2, h3 { margin: 0; }
-h1 { font-size: 24px; }
+h1 { font-size: 26px; letter-spacing: -0.01em; }
+.title-1 { color: var(--title-1); }
+.title-2 { color: var(--title-2); }
 h2 { font-size: 17px; }
 h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-2); margin-bottom: 8px; }
 p { margin: 0; }
 
-.app { max-width: 1240px; margin: 0 auto; padding: 24px 20px 40px; }
+.app { max-width: 1240px; margin: 0 auto; padding: 24px 20px; min-height: 100vh; display: flex; flex-direction: column; }
 .top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
 .top .privacy { margin-top: 4px; }
+.brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.brand img { height: 64px; width: auto; flex-shrink: 0; }
+.logo-light { display: var(--logo-light); }
+.logo-dark { display: var(--logo-dark); }
+@media (max-width: 560px) {
+  /* theme picker on its own row above, so the title and tagline get the full width */
+  .top { flex-wrap: wrap; gap: 10px; }
+  .top-actions { order: -1; margin-left: auto; }
+  .brand { flex-basis: 100%; gap: 10px; }
+  .brand img { height: 44px; }
+  h1 { font-size: 22px; }
+}
 .tagline { color: var(--text-2); }
+.top-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .theme-select { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); flex-shrink: 0; }
 .theme-select select { width: auto; font-size: 13px; padding: 3px 6px; }
 .privacy { font-size: 13px; color: var(--muted); }
-.foot { margin-top: 32px; font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
+/* pushed to the bottom of the window when the page is shorter than it */
+.foot { margin-top: auto; padding-top: 28px; font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; }
 
-.layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
-@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+.layout { display: flex; flex-direction: column; gap: 16px; }
 .work { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
 .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
-.settings section { padding: 12px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 10px; }
-.settings details { border-top: 1px solid var(--line); padding-top: 12px; }
-.settings summary { cursor: pointer; font-weight: 600; font-size: 14px; margin-bottom: 10px; }
+/* settings groups side by side on wide screens, two per row on medium, stacked on phones */
+.settings-grid { display: grid; grid-template-columns: 1.25fr 1.15fr 0.75fr 1.2fr; }
+.settings-grid > section { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding: 2px 20px; border-left: 1px solid var(--line); }
+.settings-grid > section:first-child { padding-left: 0; border-left: 0; }
+.settings-grid > section:last-child { padding-right: 0; }
+@media (max-width: 1060px) {
+  .settings-grid { grid-template-columns: 1fr 1fr; gap: 20px 28px; }
+  .settings-grid > section { padding: 0; border-left: 0; }
+}
+@media (max-width: 640px) {
+  .settings-grid { grid-template-columns: 1fr; gap: 0; }
+  .settings-grid > section { padding: 14px 0; border-top: 1px solid var(--line); }
+  .settings-grid > section:first-child { padding-top: 0; border-top: 0; }
+}
+.h3-note { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--muted); margin-left: 4px; }
 .row { display: flex; align-items: center; }
 .gap-s { gap: 6px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
 .note { font-size: 12px; color: var(--muted); }
 .muted { color: var(--muted); font-size: 13px; }
 .error-text { color: var(--error); font-size: 13px; }
@@ -166,3 +204,20 @@ table.files { width: 100%; border-collapse: collapse; font-size: 14px; }
   background: var(--raised); border: 1px solid var(--line-strong); border-radius: var(--radius);
   padding: 10px 14px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15); font-size: 14px;
 }
+
+/* install instructions (a native <dialog>: Esc and the backdrop close it, focus stays inside) */
+.dialog {
+  border: 1px solid var(--line-strong); border-radius: 12px; padding: 0; max-width: 520px; width: calc(100% - 32px);
+  background: var(--surface); color: var(--text); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+.dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
+.dialog-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; }
+.dialog-lead { color: var(--text-2); }
+.dialog h3 { margin: 6px 0 0; }
+.dialog ol { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.dialog p, .dialog li { color: var(--text-2); }
+.dialog strong { color: var(--text); }
+.dialog details { border-top: 1px solid var(--line); padding-top: 10px; }
+.dialog summary { cursor: pointer; font-size: 14px; color: var(--text-2); }
+.dialog details section { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.dialog-actions { display: flex; justify-content: flex-end; margin-top: 6px; }
