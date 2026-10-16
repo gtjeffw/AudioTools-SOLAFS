@@ -463,9 +463,13 @@ bool SOLAFS_readFile(WAV_FILE InWavFile,
 	}
 
 
-	if(numRead1 < samplesToRead)
+	//part B is whatever didn't fit in part A (it wraps to the start of the buffer).
+	//NOTE: this must use partAReadSize, not numRead1.  If the file ended partway through
+	//part A, using numRead1 made part B too big, so it zero-filled (and counted as faked)
+	//valid samples at the start of the buffer.
+	if(partAReadSize < samplesToRead)
 	{
-		UINT32 partBReadSize = samplesToRead - numRead1;
+		UINT32 partBReadSize = samplesToRead - partAReadSize;
 
 		wavErr = wavRead(InWavFile, OutBuf->buf, partBReadSize, 1, &numRead2);
 
