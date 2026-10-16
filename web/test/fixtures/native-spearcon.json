@@ -1,0 +1,257 @@
+{
+ "note": "SHA-256 of spearcon outputs from the native C++ in this repo, built with clang -O2 -ffp-contract=off, for native/bin/audio inputs. web/test/engine.test.ts checks the WebAssembly engine reproduces them byte for byte. -ffp-contract=off matters: WebAssembly has no fused multiply-add, and letting a native compiler fuse multiply-adds (clang's default on ARM) changes rounding enough to pick a different SOLAFS skew now and then.",
+ "cases": [
+  {
+   "input": "bruce_walker.wav",
+   "args": "LENGTH_SEC:0.4",
+   "sha256": "cb73b458ef02ccf271f99793bb67301ead9d1b7abd880fc1da580a4348f43649",
+   "bytes": 35444
+  },
+  {
+   "input": "bruce_walker.wav",
+   "args": "TIMESCALE:LOG",
+   "sha256": "12dde7def356d552b2a55a9ae8c8c50355be6523f2195cf8bbdd20bf75d90e93",
+   "bytes": 53144
+  },
+  {
+   "input": "bruce_walker.wav",
+   "args": "LOG_TIME_A:0.5 LOG_TIME_B:0.15",
+   "sha256": "5e2e8c8e7789b55d92312e314c18acdef9a2e4f358559e5c8841532caca7827c",
+   "bytes": 28844
+  },
+  {
+   "input": "bruce_walker.wav",
+   "args": "IN_TO_OUT_RATIO:2.5",
+   "sha256": "c7aafdef788afaba23bd1c027b342beb3f6a92773b3770d0582f8246038bb1da",
+   "bytes": 43844
+  },
+  {
+   "input": "bruce_walker.wav",
+   "args": "IN_TO_OUT_RATIO:0.6",
+   "sha256": "ca02485e3f68bd9483b51b443c0a4c4be0dcd91c3bb15486c51db3de69289b83",
+   "bytes": 182364
+  },
+  {
+   "input": "bruce_walker.wav",
+   "args": "LENGTH_SEC:0.3 COMPSTEPMODE:LINEAR CS_START_RAT:0.1",
+   "sha256": "fc3abb4eb25fe56a1ae61f957394b382012166a5f9e746def05153536ae8e1ac",
+   "bytes": 26744
+  },
+  {
+   "input": "bruce_walker.wav",
+   "args": "LENGTH_SEC:0.5 SOLAFS_WINDOWSIZE:400 SOLAFS_OVERLAP:200 SOLAFS_MAXSKEW:400",
+   "sha256": "75c3f3238ae0c964bdcee390d1f2953c5972d136d0a3f034b00da46f80922370",
+   "bytes": 44294
+  },
+  {
+   "input": "natures_miracle_med.wav",
+   "args": "LENGTH_SEC:0.4",
+   "sha256": "2bf2c580fe529808d1183de5ba23bc4b89e030cdeaab5b035ff70468671243e7",
+   "bytes": 35744
+  },
+  {
+   "input": "natures_miracle_med.wav",
+   "args": "TIMESCALE:LOG",
+   "sha256": "e5724080c27804810dde14c1689b6318eea9be1fca8836929b729b52a6f1e9ee",
+   "bytes": 94844
+  },
+  {
+   "input": "natures_miracle_med.wav",
+   "args": "LOG_TIME_A:0.5 LOG_TIME_B:0.15",
+   "sha256": "e508c99b82b0539bab57b057c728551e2fb9c7539fc9427e6d8f4031d48331b1",
+   "bytes": 49844
+  },
+  {
+   "input": "natures_miracle_med.wav",
+   "args": "IN_TO_OUT_RATIO:2.5",
+   "sha256": "a8857851d2e158bfb4184a00bbee1c78e50e5b5d57ee58e146113c261ec5c915",
+   "bytes": 200120
+  },
+  {
+   "input": "natures_miracle_med.wav",
+   "args": "IN_TO_OUT_RATIO:0.6",
+   "sha256": "0389bf6dac230825da4bfd80b0c90f5406a539819379b0642ab660723bc2c41b",
+   "bytes": 832820
+  },
+  {
+   "input": "natures_miracle_med.wav",
+   "args": "LENGTH_SEC:0.3 COMPSTEPMODE:LINEAR CS_START_RAT:0.1",
+   "sha256": "f8420dee0e2b4ee0792f90641c41bb558cd0cddd63ddac3781b478e93ba47f9a",
+   "bytes": 26744
+  },
+  {
+   "input": "natures_miracle_med.wav",
+   "args": "LENGTH_SEC:0.5 SOLAFS_WINDOWSIZE:400 SOLAFS_OVERLAP:200 SOLAFS_MAXSKEW:400",
+   "sha256": "21de00657530c7c6163c2cf04616b0d21c8e8a5ca3d27a9e8064958dadd2dac8",
+   "bytes": 44444
+  },
+  {
+   "input": "jeff_wilson.wav",
+   "args": "LENGTH_SEC:0.4",
+   "sha256": "839591d6bee1b7b8147e3941c6c2ab997e38f6bb60d594d72927cb9722f292ce",
+   "bytes": 35444
+  },
+  {
+   "input": "jeff_wilson.wav",
+   "args": "TIMESCALE:LOG",
+   "sha256": "61be88e7b4edc49b69c3dd22c5d22df2edd44a4dc37a4c428111b32aad2b38f4",
+   "bytes": 58844
+  },
+  {
+   "input": "jeff_wilson.wav",
+   "args": "LOG_TIME_A:0.5 LOG_TIME_B:0.15",
+   "sha256": "7c5bf3ec513b759f9da8186c7d3671685f14472e41e4d54d38c724acf2bd09bd",
+   "bytes": 31752
+  },
+  {
+   "input": "jeff_wilson.wav",
+   "args": "IN_TO_OUT_RATIO:2.5",
+   "sha256": "5dda99988f02e53fb814de40e665c46ba85502f522db2ea3d4637b42a3436ce3",
+   "bytes": 56744
+  },
+  {
+   "input": "jeff_wilson.wav",
+   "args": "IN_TO_OUT_RATIO:0.6",
+   "sha256": "6cf844d9f19b6a0fc440ed80406c09abe42e09a54277f557d0dfa48c5847ff85",
+   "bytes": 235436
+  },
+  {
+   "input": "jeff_wilson.wav",
+   "args": "LENGTH_SEC:0.3 COMPSTEPMODE:LINEAR CS_START_RAT:0.1",
+   "sha256": "5ba078c63a5529d06418f864ca8588672470018c5c591c491e7ad3628ecd7d4f",
+   "bytes": 26744
+  },
+  {
+   "input": "jeff_wilson.wav",
+   "args": "LENGTH_SEC:0.5 SOLAFS_WINDOWSIZE:400 SOLAFS_OVERLAP:200 SOLAFS_MAXSKEW:400",
+   "sha256": "3f10ab58a1e3f5b9df18622c12de2d1428b9e0d69dff3757ed49d2cc333b7dbc",
+   "bytes": 44366
+  },
+  {
+   "input": "allegra_sidner.wav",
+   "args": "LENGTH_SEC:0.4",
+   "sha256": "04910df246d7682ba7531a7ab019fbea58717a73e6323d241c0e1d56e3fe5e47",
+   "bytes": 12944
+  },
+  {
+   "input": "allegra_sidner.wav",
+   "args": "TIMESCALE:LOG",
+   "sha256": "05cae121935f73a4f5949c04bdd2ebe32336d8fb0b32a8da78de2bb127fb038d",
+   "bytes": 18720
+  },
+  {
+   "input": "allegra_sidner.wav",
+   "args": "LOG_TIME_A:0.5 LOG_TIME_B:0.15",
+   "sha256": "6fa739003e0ae71354b1c36f281f5caf52f2264332cac0465e73247020321599",
+   "bytes": 10244
+  },
+  {
+   "input": "allegra_sidner.wav",
+   "args": "IN_TO_OUT_RATIO:2.5",
+   "sha256": "ced0f4c98efa76075ad80e551b46efa374af295e74e61e9ed0a79096f1563320",
+   "bytes": 14794
+  },
+  {
+   "input": "allegra_sidner.wav",
+   "args": "IN_TO_OUT_RATIO:0.6",
+   "sha256": "0a67a0162343f47ae8dfb740f69ab2f99c5bd83ef9433c338ce1215654a8ea59",
+   "bytes": 61204
+  },
+  {
+   "input": "allegra_sidner.wav",
+   "args": "LENGTH_SEC:0.3 COMPSTEPMODE:LINEAR CS_START_RAT:0.1",
+   "sha256": "4ef8536aeb07eb0c127a6d34e72f7356ff1192efff1966d7a742ed6ca4132585",
+   "bytes": 9944
+  },
+  {
+   "input": "allegra_sidner.wav",
+   "args": "LENGTH_SEC:0.5 SOLAFS_WINDOWSIZE:400 SOLAFS_OVERLAP:200 SOLAFS_MAXSKEW:400",
+   "sha256": "e4c60f84e1ee170ad0653389e501baeaa0abc5f224454194174dfe8ab730bca7",
+   "bytes": 16046
+  },
+  {
+   "input": "anne_drum.wav",
+   "args": "LENGTH_SEC:0.4",
+   "sha256": "cd973ab187d14886726937aaafc00476301c38b8533ca2513a9e7a430413f9e8",
+   "bytes": 12944
+  },
+  {
+   "input": "anne_drum.wav",
+   "args": "TIMESCALE:LOG",
+   "sha256": "403086fb6f548b48f5b505ed6ca96c5035376ecbb9367d37776135f8cf3accb1",
+   "bytes": 16544
+  },
+  {
+   "input": "anne_drum.wav",
+   "args": "LOG_TIME_A:0.5 LOG_TIME_B:0.15",
+   "sha256": "2ea2eeeab98d9c86a985c55d30ab78e99279895dcb643096874879744902a612",
+   "bytes": 9156
+  },
+  {
+   "input": "anne_drum.wav",
+   "args": "IN_TO_OUT_RATIO:2.5",
+   "sha256": "f3d34ca945ea70a7615b04ed3b4c4bc80c47f92e9e6f02dcf36a856e159a1b23",
+   "bytes": 10844
+  },
+  {
+   "input": "anne_drum.wav",
+   "args": "IN_TO_OUT_RATIO:0.6",
+   "sha256": "74bc5146f0a52a0bd583ea4575ba6d4892c7efa8cfc2b7020177597da0e3e921",
+   "bytes": 44684
+  },
+  {
+   "input": "anne_drum.wav",
+   "args": "LENGTH_SEC:0.3 COMPSTEPMODE:LINEAR CS_START_RAT:0.1",
+   "sha256": "56bc99c753fadca8706e60226c6c18e6d8f40471d6fe5505e2d0eba8dd4f1b30",
+   "bytes": 9644
+  },
+  {
+   "input": "anne_drum.wav",
+   "args": "LENGTH_SEC:0.5 SOLAFS_WINDOWSIZE:400 SOLAFS_OVERLAP:200 SOLAFS_MAXSKEW:400",
+   "sha256": "ff727548601b8700297d8508be7d510a5feea7347a07b1b31fb76bbb8f0605bd",
+   "bytes": 16044
+  },
+  {
+   "input": "abc.wav",
+   "args": "LENGTH_SEC:0.4",
+   "sha256": "c41e2fb3fe1d68aa51dc76bd4b702ba9c6934f0f347650c8a3ad3d075f8979fa",
+   "bytes": 35744
+  },
+  {
+   "input": "abc.wav",
+   "args": "TIMESCALE:LOG",
+   "sha256": "0e5f132f5b8ed8c0580f25156dde4d2c1277c3e91e96d7900ca7de83ea8bcbab",
+   "bytes": 121328
+  },
+  {
+   "input": "abc.wav",
+   "args": "LOG_TIME_A:0.5 LOG_TIME_B:0.15",
+   "sha256": "a4af03c9443defd274ea5ec63d9c0de443d8ed84e613d542b8b281810badbf73",
+   "bytes": 63044
+  },
+  {
+   "input": "abc.wav",
+   "args": "IN_TO_OUT_RATIO:2.5",
+   "sha256": "02dc78fc3beca49cd417bbea1ed3a38a547cc868a315c8c5e27015c6922a5581",
+   "bytes": 434444
+  },
+  {
+   "input": "abc.wav",
+   "args": "IN_TO_OUT_RATIO:0.6",
+   "sha256": "9bd63b519d0dd21df1c1cd5478f9bcf9b1c087cc89441a45aa2a16ca3a46f8d4",
+   "bytes": 1809836
+  },
+  {
+   "input": "abc.wav",
+   "args": "LENGTH_SEC:0.3 COMPSTEPMODE:LINEAR CS_START_RAT:0.1",
+   "sha256": "d56de6b2df2f74e1db899560daaef633c7cbb6758fff28c9640af97562dcc773",
+   "bytes": 26744
+  },
+  {
+   "input": "abc.wav",
+   "args": "LENGTH_SEC:0.5 SOLAFS_WINDOWSIZE:400 SOLAFS_OVERLAP:200 SOLAFS_MAXSKEW:400",
+   "sha256": "7a2713350d2961f120206420e51ea4f7cc90ff0fc635caf40b5df841e74577d9",
+   "bytes": 44844
+  }
+ ]
+}

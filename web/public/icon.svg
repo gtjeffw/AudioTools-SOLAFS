@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#2a78d6"/>
+  <!-- waveform bars that bunch up left to right: speech being sped up -->
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-width="18">
+    <path d="M118 226v60M170 176v160M220 206v100M264 146v220M302 196v120M334 166v180M360 214v84M382 190v132M400 230v52M414 216v80"/>
+  </g>
+</svg>
