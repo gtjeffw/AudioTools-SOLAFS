@@ -63,7 +63,7 @@ bool CFB_delete(CIRCULAR_FLOAT_BUFFER cfb)
 	return true;
 }
 
-inline UINT32 CFG_virtualPosStart(CIRCULAR_FLOAT_BUFFER b)
+UINT32 CFG_virtualPosStart(CIRCULAR_FLOAT_BUFFER b)
 {
 	if(b == NULL)
 		return (UINT32)0;

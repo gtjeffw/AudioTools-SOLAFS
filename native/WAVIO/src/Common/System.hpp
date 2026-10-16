@@ -13,8 +13,10 @@
 #define _SYSTEM_H_
 
 //byte order for multi byte data formats?
-#define LITTLE_ENDIAN
-//#define BIG_ENDIAN
+//(prefixed so they don't collide with the LITTLE_ENDIAN/BIG_ENDIAN macros that system headers define
+//on macOS and Linux, where BIG_ENDIAN is always defined and tripped the check in FileIO.hpp)
+#define SYSTEM_LITTLE_ENDIAN
+//#define SYSTEM_BIG_ENDIAN
 
 //what integer format is used on this system?
 #define TWOS_COMPLEMENT

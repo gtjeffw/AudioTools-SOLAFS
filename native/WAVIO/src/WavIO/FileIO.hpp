@@ -17,7 +17,7 @@
 #include "Common/System.hpp"
 #include "Common/CommonTypes.hpp"
 
-#ifdef BIG_ENDIAN
+#ifdef SYSTEM_BIG_ENDIAN
 #error Big Endian system support not implemented
 #endif
 

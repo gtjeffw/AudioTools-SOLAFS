@@ -6,9 +6,9 @@
 #include <math.h>
 
 
-#include "Common\CommonTypes.hpp"
-#include "WavIO\WavIO.hpp"
-#include "CircFBuf\CircFBuf.hpp"
+#include "Common/CommonTypes.hpp"
+#include "WavIO/WavIO.hpp"
+#include "CircFBuf/CircFBuf.hpp"
 
 
 #include "SOLAFS.hpp"
@@ -602,6 +602,19 @@ bool SOLAFS(
 
 	UINT32 trueSize = 0;
 
+	//declared up here so the goto's below don't skip their initialization
+	//(MSVC allows that, standard C++ doesn't)
+	UINT32 nextPredInPos = 0;
+	UINT32 currOutPos = 0;
+
+	bool test = true;
+	bool keepGoing = true;
+	bool finalSizeFound = false;
+
+	UINT32 finalSize = 0;
+
+	UINT32 remSamples = 0;
+
 	if(OutWavFile == NULL || InWavFile == NULL)
 		return false;
 
@@ -632,9 +645,6 @@ bool SOLAFS(
 		goto SOLAFS_CLEANUP;
 	}
 
-	UINT32 nextPredInPos = 0;
-	UINT32 currOutPos = 0;
-
 	if(!SOLAFS_BeginStream(OutBuf, InBuf, InToOutRatio, WindowSize, WindowOverlap, 
 							MaxSkew, CrossCorrDecimationFactor, SkewDecimationFactor, 
 							&nextPredInPos, &currOutPos))
@@ -648,14 +658,6 @@ bool SOLAFS(
 		ret = false;
 		goto SOLAFS_CLEANUP;
 	}
-
-	bool test = true;
-	bool keepGoing = true;
-	bool finalSizeFound = false;
-
-	UINT32 finalSize = 0;
-
-	UINT32 remSamples = 0;
 
 	//main loop.  exhaust all of the InWavFile, do incremental SOLAFS, then write out
 	//readFile should continue until Inbuf would have no data from the
