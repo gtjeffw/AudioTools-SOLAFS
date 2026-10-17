@@ -1,0 +1,77 @@
+diff --git a/native/SOLAFS/src/SOLAFS/SOLAFS.cpp b/native/SOLAFS/src/SOLAFS/SOLAFS.cpp
+index 0d3ef03..f388cf2 100644
+--- a/native/SOLAFS/src/SOLAFS/SOLAFS.cpp
++++ b/native/SOLAFS/src/SOLAFS/SOLAFS.cpp
+@@ -36,6 +36,7 @@ UINT32 gSkewPred = 0; //predicted skew
+ 
+ 
+ float * gCrossFade = NULL;
++int gCrossFadeShape = SOLAFS_XFADE_LINEAR; //see SOLAFS_SetCrossFadeShape()
+ 
+ 
+ 
+@@ -245,9 +246,22 @@ bool SOLAFS_PerformCrossFade(CIRCULAR_FLOAT_BUFFER OutBuf, UINT32 OutBuf_VirtPos
+ 	if(gCrossFade == NULL)
+ 		return false;
+ 
+-	//linear cross-fade, symmetric and strictly inside (0,1) like Ellis's solafs.m: (1:Wov)/(Wov+1)
+ 	for(UINT32 i=0 ; i<gWindowOverlap ; i++)
+-		gCrossFade[i] = (i+1) / (float)(gWindowOverlap+1);
++	{
++		if(gCrossFadeShape == SOLAFS_XFADE_HANN)
++		{
++			//rising half of a Hann window, sin^2.  With the complementary 1-f weight on the outgoing
++			//segment the pair sums to 1 (cos^2 + sin^2), and with WindowOverlap = WindowSize/2 every
++			//output sample is a Hann-windowed overlap-add of two segments: WSOLA.
++			double s = sin(SOLAFS_PI * (i + 0.5) / (2.0 * gWindowOverlap));
++			gCrossFade[i] = (float)(s * s);
++		}
++		else
++		{
++			//linear cross-fade, symmetric and strictly inside (0,1) like Ellis's solafs.m: (1:Wov)/(Wov+1)
++			gCrossFade[i] = (i+1) / (float)(gWindowOverlap+1);
++		}
++	}
+ 
+ 
+ 	return true;
+@@ -354,6 +368,13 @@ bool SOLAFS_UpdateStream(
+ }
+ 
+ 
++void SOLAFS_SetCrossFadeShape(int shape)
++//SOLAFS_XFADE_LINEAR (the default) or SOLAFS_XFADE_HANN; takes effect at the next SOLAFS_BeginStream()
++{
++	gCrossFadeShape = (shape == SOLAFS_XFADE_HANN) ? SOLAFS_XFADE_HANN : SOLAFS_XFADE_LINEAR;
++}
++
++
+ void SOLAFS_EndStream()
+ //frees what SOLAFS_BeginStream() allocated
+ {
+diff --git a/native/SOLAFS/src/SOLAFS/SOLAFS.hpp b/native/SOLAFS/src/SOLAFS/SOLAFS.hpp
+index 13a30ef..a8faf61 100644
+--- a/native/SOLAFS/src/SOLAFS/SOLAFS.hpp
++++ b/native/SOLAFS/src/SOLAFS/SOLAFS.hpp
+@@ -33,6 +33,12 @@
+ 
+ 
+ 
++//Cross-fade shapes for SOLAFS_SetCrossFadeShape()
++#define SOLAFS_XFADE_LINEAR	0	//linear cross-fade, as in Hejna & Musicus and Ellis's solafs.m (the default)
++#define SOLAFS_XFADE_HANN	1	//raised-cosine (Hann) cross-fade; with WindowOverlap = WindowSize/2 this is WSOLA
++
++#define SOLAFS_PI 3.14159265358979323846
++
+ #endif //#ifndef _SOLAFS_HPP_
+ 
+ 
+@@ -73,6 +79,8 @@ bool SOLAFS_UpdateStream(
+ 
+ void SOLAFS_EndStream(); //frees what SOLAFS_BeginStream() allocated
+ 
++void SOLAFS_SetCrossFadeShape(int shape); //SOLAFS_XFADE_LINEAR (default) or SOLAFS_XFADE_HANN; applies from the next SOLAFS_BeginStream()
++
+ bool SOLAFS_readFile(WAV_FILE InWavFile,
+ 					 CIRCULAR_FLOAT_BUFFER OutBuf,
+ 					 UINT32 TargetVirtStartPos,

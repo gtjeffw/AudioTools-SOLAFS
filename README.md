@@ -20,6 +20,7 @@ There are two ways to use it:
 | `web/` | Spearcon Factory web app (Vite + React + TypeScript) and the WebAssembly build of the engine |
 | `native/SOLAFS/` | SOLAFS itself (`src/SOLAFS/SOLAFS.cpp`); `project/SOLAFS/SOLAFS.sln` is the Visual Studio solution for everything |
 | `native/SOLAFS/src/SOLAFS/docs/` | references: notes on the changes made to Ellis's MATLAB `solafs.m` while porting it, and US patent 5,175,769, which describes the same algorithm |
+| `native/SOLAFS/experiments/` | research on variations of SOLAFS (WSOLA cross-fades, consonant-aware compression), with code, results and findings; none of it is used by the tools |
 | `native/WAVIO/`, `native/CIRCULAR_BUFFER/` | WAV file I/O and the circular buffer SOLAFS streams through |
 | `native/Spearcon/` | `spearcon.exe` |
 | `native/SilentStripper/` | `SilentStripper.exe` |
